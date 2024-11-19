@@ -1,99 +1,10 @@
-// import express from 'express';
-// import dotenv from 'dotenv';
-// import { upload } from './multer.middleware.js';
-// import { uploadOnCloudinary } from './cloundinary.js';
-// import { fileURLToPath } from 'url';
-// import { dirname, join } from 'path';
-
-// // Get the directory name of the current module
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-
-// dotenv.config();
-
-// const app = express();
-
-// // Middleware
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.static('public')); // Serve static files
-
-// // Home route
-// app.get('/home', (req, res) => {
-//     res.sendFile(join(__dirname, 'public', 'homepage.html'));
-// });
-
-// // Create upload endpoint
-// app.post('/upload', upload.single('file'), async (req, res) => {
-//     try {
-//         // Check if file exists
-//         if (!req.file) {
-//             return res.status(400).json({
-//                 success: false,
-//                 message: "No file uploaded"
-//             });
-//         }
-
-//         // Get the local path of uploaded file
-//         const localFilePath = req.file.path;
-
-//         // Upload to cloudinary
-//         const result = await uploadOnCloudinary(localFilePath);
-
-//         // Check if upload was successful
-//         if (!result) {
-//             return res.status(500).json({
-//                 success: false,
-//                 message: "Failed to upload file to Cloudinary"
-//             });
-//         }
-
-//         // Send success response
-//         res.status(200).json({
-//             success: true,
-//             message: "File uploaded successfully",
-//             data: {
-//                 file_url: result.url,
-//                 public_id: result.public_id
-//             }
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({
-//             success: false,
-//             message: "Internal server error",
-//             error: error.message
-//         });
-//     }
-// });
-
-// // Error handling middleware
-// app.use((err, req, res, next) => {
-//     console.error(err.stack);
-//     res.status(500).json({
-//         success: false,
-//         message: "Something broke!",
-//         error: err.message
-//     });
-// });
-
-// // Start server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-// });
-
-
-
-
-
-
 import express from 'express';
 import dotenv from 'dotenv';
 import { upload } from './multer.middleware.js';
 import { uploadOnCloudinary } from './cloudinaryyy.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from "fs";
 
 // Configure dotenv before anything else
 dotenv.config();
@@ -123,8 +34,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Home route
+// app.get('/home', (req, res) => {
+//     res.sendFile(join(__dirname, 'public', 'homepage.html'));
+// });
+
 app.get('/home', (req, res) => {
-    res.sendFile(join(__dirname, 'public', 'homepage.html'));
+    const filePath = join(__dirname, 'public', 'homepage.html');
+    
+    // Check if the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error('File not found:', filePath);
+            return res.status(404).send('404: Homepage not found!');
+        }
+
+        // Send the file if it exists
+        res.sendFile(filePath);
+    });
 });
 
 // Upload route with better error handling
