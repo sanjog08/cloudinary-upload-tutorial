@@ -33,11 +33,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Home route
-// app.get('/home', (req, res) => {
-//     res.sendFile(join(__dirname, 'public', 'homepage.html'));
-// });
-
+// home route
+app.get('/', (req, res) => {
+    res.send('Hello, your server is running fine.....');
+});
+    
+// upload home route
 app.get('/home', (req, res) => {
     const filePath = join(__dirname, 'public', 'homepage.html');
     
@@ -103,7 +104,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Access the upload page at http://localhost:${PORT}/home`);
